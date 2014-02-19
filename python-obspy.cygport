@@ -1,0 +1,18 @@
+inherit python-distutils
+
+NAME="python-obspy"
+VERSION=0.9.0
+RELEASE=1
+CATEGORY="Python"
+SUMMARY="Python framework for seismological data"
+DESCRIPTION="ObsPy is an open-source project dedicated to provide a Python
+framework for processing seismological data. It provides parsers for common
+file formats, clients to access data centers and seismological signal
+processing routines which allow the manipulation of seismological time series."
+HOMEPAGE="http://www.obspy.org/"
+SRC_URI="https://pypi.python.org/packages/source/o/obspy/obspy-${VERSION}.zip"
+SRC_DIR="obspy-${VERSION}"
+PATCH_URI="0.9.0-cygwin.patch"
+
+# interferes with get_flags_linker_so in numpy.distutils.fcompiler
+unset LDFLAGS

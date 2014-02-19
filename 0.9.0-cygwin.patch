@@ -1,0 +1,128 @@
+platform.system() == `uname -s`, which contains hyphen(s) and dot on Cygwin
+which are not allowed in module names:
+
+http://stackoverflow.com/q/21853678
+
+--- origsrc/obspy-0.9.0/obspy/gse2/libgse2.py	2013-12-08 11:15:24.000000000 -0600
++++ src/obspy-0.9.0/obspy/gse2/libgse2.py	2014-02-19 08:38:53.084708400 -0600
+@@ -30,6 +30,7 @@ import ctypes as C
+ import doctest
+ import numpy as np
+ import os
++import sys
+ import platform
+ import warnings
+ 
+@@ -38,7 +39,7 @@ import warnings
+ lib_names = [
+     # platform specific library name
+     'libgse2_%s_%s_py%s' % (
+-        platform.system(), platform.architecture()[0],
++        sys.platform, platform.architecture()[0],
+         ''.join([str(i) for i in platform.python_version_tuple()[:2]])),
+     # fallback for pre-packaged libraries
+     'libgse2']
+--- origsrc/obspy-0.9.0/obspy/mseed/headers.py	2013-12-08 11:15:26.000000000 -0600
++++ src/obspy-0.9.0/obspy/mseed/headers.py	2014-02-19 08:39:10.327398000 -0600
+@@ -7,6 +7,7 @@ from distutils import sysconfig
+ import ctypes as C
+ import numpy as np
+ import os
++import sys
+ import platform
+ 
+ 
+@@ -19,7 +20,7 @@ ENDIAN = {0: '<', 1: '>'}
+ lib_names = [
+     # platform specific library name
+     'libmseed_%s_%s_py%s' % (
+-        platform.system(), platform.architecture()[0],
++        sys.platform, platform.architecture()[0],
+         ''.join([str(i) for i in platform.python_version_tuple()[:2]])),
+     # fallback for pre-packaged libraries
+     'libmseed']
+--- origsrc/obspy-0.9.0/obspy/mseed/src/libmseed/lmplatform.h	2012-05-17 17:08:16.000000000 -0500
++++ src/obspy-0.9.0/obspy/mseed/src/libmseed/lmplatform.h	2014-02-19 08:43:26.638445300 -0600
+@@ -83,7 +83,7 @@ extern "C" {
+   #include <string.h>
+   #include <ctype.h>
+   
+-#elif defined(__APPLE__) || defined(__FreeBSD__) || defined(__OpenBSD__) || defined(__NetBSD__)
++#elif defined(__APPLE__) || defined(__FreeBSD__) || defined(__OpenBSD__) || defined(__NetBSD__) || defined(__CYGWIN__)
+   #define LMP_BSD 1
+ 
+   #include <stdlib.h>
+--- origsrc/obspy-0.9.0/obspy/segy/util.py	2013-12-08 11:15:32.000000000 -0600
++++ src/obspy-0.9.0/obspy/segy/util.py	2014-02-19 08:39:40.774764300 -0600
+@@ -4,6 +4,7 @@ from distutils import sysconfig
+ from struct import unpack
+ import ctypes as C
+ import os
++import sys
+ import platform
+ 
+ # Import shared libsegy depending on the platform.
+@@ -11,7 +12,7 @@ import platform
+ lib_names = [
+     # platform specific library name
+     'libsegy_%s_%s_py%s' % (
+-        platform.system(), platform.architecture()[0],
++        sys.platform, platform.architecture()[0],
+         ''.join([str(i) for i in platform.python_version_tuple()[:2]])),
+     # fallback for pre-packaged libraries
+     'libsegy']
+--- origsrc/obspy-0.9.0/obspy/signal/headers.py	2013-12-08 11:15:34.000000000 -0600
++++ src/obspy-0.9.0/obspy/signal/headers.py	2014-02-19 08:40:02.736553100 -0600
+@@ -7,6 +7,7 @@ from distutils import sysconfig
+ import ctypes as C
+ import numpy as np
+ import os
++import sys
+ import platform
+ 
+ 
+@@ -15,7 +16,7 @@ import platform
+ lib_names = [
+     # platform specific library name
+     'libsignal_%s_%s_py%s' % (
+-        platform.system(), platform.architecture()[0],
++        sys.platform, platform.architecture()[0],
+         ''.join([str(i) for i in platform.python_version_tuple()[:2]])),
+     # fallback for pre-packaged libraries
+     'libsignal']
+@@ -38,7 +39,7 @@ else:
+ erlib_names = [
+     # platform specific library name
+     'libevresp_%s_%s_py%s' % (
+-        platform.system(), platform.architecture()[0],
++        sys.platform, platform.architecture()[0],
+         ''.join([str(i) for i in platform.python_version_tuple()[:2]])),
+     # fallback for pre-packaged libraries
+     'libevresp']
+--- origsrc/obspy-0.9.0/obspy/taup/taup.py	2013-12-08 11:15:36.000000000 -0600
++++ src/obspy-0.9.0/obspy/taup/taup.py	2014-02-19 08:40:32.962891300 -0600
+@@ -5,11 +5,12 @@ obspy.taup - Travel time calculation too
+ import inspect
+ import numpy as np
+ import os
++import sys
+ import platform
+ 
+ 
+ lib_name = 'libtau_%s_%s_py%s' % \
+-    (platform.system(), platform.architecture()[0],
++    (sys.platform, platform.architecture()[0],
+      ''.join([str(i) for i in platform.python_version_tuple()[:2]]))
+ 
+ # Import libtau in a platform specific way.
+--- origsrc/obspy-0.9.0/setup.py	2014-01-10 21:13:00.000000000 -0600
++++ src/obspy-0.9.0/setup.py	2014-02-19 08:41:00.576397800 -0600
+@@ -316,7 +316,7 @@ def _get_lib_name(lib):
+     filename.
+     """
+     return "lib%s_%s_%s_py%s" % (
+-        lib, platform.system(), platform.architecture()[0], "".join(
++        lib, sys.platform, platform.architecture()[0], "".join(
+             [str(i) for i in platform.python_version_tuple()[:2]]))
+ 
+ # monkey patches for MS Visual Studio
